@@ -119,7 +119,7 @@ int main( int argc, char** argv) {
     }
 
     printf("dimA = %d\n", dimA-1);
-    printf("h_a[0] = %d and (dimA - 1 - i) = %d\n", h_a[0],  dimA - 1 - i);
+    printf("h_a[0] = %d and (dimA - 1 - i) = %d\n", h_a[0],  dimA - 1 - 0);
  
     // free device memory
     cudaFree(d_a);
