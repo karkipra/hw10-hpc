@@ -94,7 +94,7 @@ int main( int argc, char** argv) {
     // Initialize input array on host
     for (int i = 0; i < dimA; ++i) {
         h_a[i] = i; //rand();
-        //h_b[i] = h_a[i];
+        h_b[i] = h_a[i];
     }
 
     printf("h_a[0] = %d and h_b[0] = %d\n", h_a[0], h_b[0]);
@@ -115,11 +115,11 @@ int main( int argc, char** argv) {
  
     // verify the data returned to the host is correct
     for (int i = 0; i < dimA; i++){
-        assert(h_a[i] == dimA - 1 - i);
+        //assert(h_a[i] == dimA - 1 - i);
     }
 
     printf("dimA = %d\n", dimA-1);
-    printf("h_a[0] = %d and h_b[%d] = %d\n", h_a[0], dimA-1, h_b[dimA-1]);
+    printf("h_a[0] = %d and (dimA - 1 - i) = %d\n", h_a[0],  dimA - 1 - i);
  
     // free device memory
     cudaFree(d_a);
