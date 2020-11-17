@@ -56,6 +56,8 @@ int main( int argc, char** argv) {
     // pointer for host memory and size
     int *h_a;
     int dimA = 16 * 1024 * 1024; // 16MB
+    // pointer for storing results into
+    int *h_b;
  
     // pointer for device memory
     int *d_b, *d_a;
@@ -72,6 +74,7 @@ int main( int argc, char** argv) {
     // allocate host and device memory
     size_t mem_size = num_blocks * num_th_per_blk * sizeof(int);
     h_a = (int *) malloc(mem_size);
+    h_b = (int *) malloc(mem_size);
     cudaMalloc( (void **) &d_a, mem_size );
     cudaMalloc( (void **) &d_b, mem_size );
 
@@ -95,11 +98,11 @@ int main( int argc, char** argv) {
     cudaThreadSynchronize();
  
     // device to host copy
-    cudaMemcpy( h_a, d_b, mem_size, cudaMemcpyDeviceToHost );
+    cudaMemcpy( h_b, d_b, mem_size, cudaMemcpyDeviceToHost );
  
     // verify the data returned to the host is correct
     for (int i = 0; i < dimA; i++){
-        //assert(h_a[i] == dimA - 1 - i );
+        assert(h_a[i] == h_b[dimA - 1 - i]);
     }
  
     // free device memory
