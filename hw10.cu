@@ -12,10 +12,10 @@ __global__ void reverse_array(int *d, int count){
     }
 }
 
-int main( int argc, char** argv) {
+int main() {
     // pointer for host memory and size
     int *h_a;
-    int dimA = 16 * 1024 * 1024; // 16MB
+    int dim_a = 16 * 1024 * 1024; // 16MB
     // pointer for comparing results
     int *h_b;
  
@@ -23,9 +23,9 @@ int main( int argc, char** argv) {
     int *d_a, *d_b;
  
     // define grid and block size
-    int num_th_per_blk = 16;
+    int num_th_per_blk = 16*1024;
     // Compute number of blocks needed based on array size and desired block size
-    int num_blocks = dimA / num_th_per_blk;  
+    int num_blocks = dim_a / num_th_per_blk;  
  
     // allocate host and device memory
     size_t mem_size;
@@ -39,7 +39,7 @@ int main( int argc, char** argv) {
     srand(time(NULL));
  
     // Initialize input array on host
-    for (int i = 0; i < dimA; ++i) {
+    for (int i = 0; i < dim_a; ++i) {
         h_a[i] = i; //rand();
         h_b[i] = h_a[i];
     }
@@ -49,20 +49,20 @@ int main( int argc, char** argv) {
     // launch kernel
     dim3 dimGrid(num_blocks);
     dim3 dimBlock(num_th_per_blk);
-    reverse_array<<<dimGrid, dimBlock>>>(d_a, dimA);
+    reverse_array<<<dimGrid, dimBlock>>>(d_a, dim_a);
  
     // device to host copy
     cudaMemcpy(h_a, d_a, mem_size, cudaMemcpyDeviceToHost);
 
-    printf("dimA = %d\n", dimA-1);
+    printf("dim_a = %d\n", dim_a-1);
  
     // verify the data returned to the host is correct
-    for (int i = 0; i < dimA; i++){
+    for (int i = 0; i < dim_a; i++){
         if(i == 15) break;
-        printf("h_a[%d] = %d and (dimA - 1 - %d) = %d\n", i, h_a[i], i,  dimA - 1 - i);
+        printf("h_a[%d] = %d and (dim_a - 1 - %d) = %d\n", i, h_a[i], i,  dim_a - 1 - i);
     }
     
-    //printf("h_a[0] = %d and (dimA - 1 - i) = %d\n", h_a[0],  dimA - 1 - 0);
+    //printf("h_a[0] = %d and (dim_a - 1 - i) = %d\n", h_a[0],  dim_a - 1 - 0);
  
     // free device memory
     cudaFree(d_a);
