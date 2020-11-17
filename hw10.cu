@@ -52,7 +52,7 @@ __global__ void reverse_array(int *d, int count){
     int out = outOffset + threadIdx.x;
     d_out[out] = s_data[threadIdx.x];
     */
-    int tid = threadIdx.x + blockIdx.x*blockDim.x;
+    const int tid = threadIdx.x + blockIdx.x*blockDim.x;
     if(tid < count/2){
         const int new_tid = count - tid - 1;
         int prev = d[tid];
@@ -72,16 +72,13 @@ int main( int argc, char** argv) {
     int *d_a;
  
     // define grid and block size
-    int num_th_per_blk = 256;
- 
+    int num_th_per_blk = 8;
     // Compute number of blocks needed based on array size and desired block size
     int num_blocks = dimA / num_th_per_blk;  
  
-    // init shared memory
-    int shared_mem_size = num_th_per_blk * sizeof(int);
- 
     // allocate host and device memory
-    size_t mem_size = num_blocks * num_th_per_blk * sizeof(int);
+    size_t mem_size;
+    mem_size = num_blocks * num_th_per_blk * sizeof(int);
     h_a = (int *) malloc(mem_size);
     h_b = (int *) malloc(mem_size);
     cudaMalloc((void **) &d_a, mem_size);
@@ -103,13 +100,13 @@ int main( int argc, char** argv) {
     // launch kernel
     dim3 dimGrid(num_blocks);
     dim3 dimBlock(num_th_per_blk);
-    reverse_array<<< dimGrid, dimBlock, shared_mem_size >>>(d_a, dimA);
+    reverse_array<<<dimGrid, dimBlock>>>(d_a, dimA);
  
     // block until the device has completed
     cudaThreadSynchronize();
  
     // device to host copy
-    cudaMemcpy(h_b, d_a, mem_size, cudaMemcpyDeviceToHost);
+    cudaMemcpy(h_a, d_a, mem_size, cudaMemcpyDeviceToHost);
  
     // verify the data returned to the host is correct
     for (int i = 0; i < dimA; i++){
