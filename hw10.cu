@@ -55,11 +55,9 @@ __global__ void reverse_array(int *d, int count){
     int tid = threadIdx.x + blockIdx.x*blockDim.x;
     if(tid < count/2){
         const int new_tid = count - tid - 1;
-        int prev_valA = d[tid];
-        int prev_valB = d[new_tid];
-
-        d[new_tid] = prev_valA;
-        d[tid] = prev_valB;
+        int prev = d[tid];
+        d[tid] = d[new_tid];
+        d[new_tid] = prev;
     }
 }
 
@@ -111,11 +109,11 @@ int main( int argc, char** argv) {
     cudaThreadSynchronize();
  
     // device to host copy
-    cudaMemcpy(h_a, d_a, mem_size, cudaMemcpyDeviceToHost);
+    cudaMemcpy(h_b, d_a, mem_size, cudaMemcpyDeviceToHost);
  
     // verify the data returned to the host is correct
     for (int i = 0; i < dimA; i++){
-        //assert(h_a[i] == dimA - 1 - i);
+        assert(h_a[i] == h_b[dimA - 1 - i]);
     }
 
     printf("dimA = %d\n", dimA-1);
