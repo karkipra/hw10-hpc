@@ -6,6 +6,11 @@
 #include <stdbool.h>
 
 /*
+    References 
+        - https://www.drdobbs.com/parallel/cuda-supercomputing-for-the-masses-part/208801731?pgno=2 
+*/
+
+/*
     reverseArray - reverses an array in kernel
     @params int*A, int dim_a
     @return void
@@ -50,7 +55,7 @@ int main(int argc, char** argv)
     // Initialize input array on host
     int val;
     srand(time(NULL));
-    for (int i = 0; i < dim_a; ++i){
+    for (int i = 0; i < dim_a; i++){
         val = rand();
         h_a[i] = val;
         check[i] = val;
@@ -63,9 +68,6 @@ int main(int argc, char** argv)
     dim3 dimGrid(num_blocks);
     dim3 dimBlock(num_th_per_blk);
     reverseArray<<< dimGrid, dimBlock >>>(d_a, dim_a);
-
-    // block until the device has completed
-    cudaThreadSynchronize();
 
     // device to host copy
     cudaMemcpy(h_a, d_a, memSize, cudaMemcpyDeviceToHost );
