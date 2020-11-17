@@ -107,4 +107,4 @@ int main(int argc, char** argv)
     free(check);
 
     return 0;
-}
+} //qsub hw10.sh -q UI-GPU -I ngpus=1
