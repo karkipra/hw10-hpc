@@ -47,7 +47,7 @@ int main() {
     printf("h_a[0] = %d and h_b[0] = %d\n", h_a[0], h_b[0]);
 
     // host to device copy
-    cudaMemcpy( d_a, h_a, memSize, cudaMemcpyHostToDevice);
+    cudaMemcpy( d_a, h_a, mem_size, cudaMemcpyHostToDevice);
  
     // launch kernel
     dim3 dimGrid(num_blocks);
