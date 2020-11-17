@@ -34,7 +34,7 @@ __global__ void reverseArrayBlock(int *d_out, int *d_in) {
 int main( int argc, char** argv) {
     // pointer for host memory and size
     int *h_a, *h_b;
-    int dimA = 256 * 1024; // 256K elements (1MB total)
+    int dimA = 16 * 1024 * 1024; // 16 MB
  
     // pointer for device memory
     int *d_b, *d_a;
@@ -55,6 +55,7 @@ int main( int argc, char** argv) {
     cudaMalloc( (void **) &d_a, memSize );
     cudaMalloc( (void **) &d_b, memSize );
  
+    printf("here1\n");
     // Initialize input array on host
     for (int i = 0; i < dimA; ++i){
         h_a[i] = i;
@@ -64,11 +65,13 @@ int main( int argc, char** argv) {
     // Copy host array to device array
     cudaMemcpy( d_a, h_a, memSize, cudaMemcpyHostToDevice );
  
+    printf("here2\n");
     // launch kernel
     dim3 dimGrid(numBlocks);
     dim3 dimBlock(numThreadsPerBlock);
     reverseArrayBlock<<< dimGrid, dimBlock, sharedMemSize >>>( d_b, d_a );
  
+    printf("here3\n");
     // block until the device has completed
     cudaThreadSynchronize();
  
@@ -82,11 +85,12 @@ int main( int argc, char** argv) {
     // Check for any CUDA errors
     checkCUDAError("memcpy");
  
+    printf("here4\n");
     // verify the data returned to the host is correct
-    for (int i = 0; i < dimA; i++)
-    {
+    for (int i = 0; i < dimA; i++){
         assert(h_a[i] ==  h_b[dimA-1-i]);
     }
+    printf("here5\n");
  
     // free device memory
     cudaFree(d_a);
@@ -103,11 +107,9 @@ int main( int argc, char** argv) {
     return 0;
 }
  
-void checkCUDAError(const char *msg)
-{
+void checkCUDAError(const char *msg){
     cudaError_t err = cudaGetLastError();
-    if( cudaSuccess != err) 
-    {
+    if( cudaSuccess != err) {
         fprintf(stderr, "Cuda error: %s: %s.\n", msg, cudaGetErrorString( err) );
         exit(EXIT_FAILURE);
     }                         
