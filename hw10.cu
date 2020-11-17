@@ -6,10 +6,10 @@
 __global__ void reverseArray(int *A, int dim_a) {
     int tid, temp; 
     tid = blockIdx.x* blockDim.x+ threadIdx.x; 
-    printf("tid = %d\n", tid);
+    //printf("tid = %d\n", tid);
 
     A[tid] = tid;
-    printf("A[%d] = %d\n", tid, A[tid]);
+    //printf("A[%d] = %d\n", tid, A[tid]);
 
     /*
     if(tid < dim_a/2){
