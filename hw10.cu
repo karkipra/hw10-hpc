@@ -5,11 +5,11 @@
 __global__ void reverse_array(int *d, int count){
     int tid;
     tid = blockIdx.x* blockDim.x+ threadIdx.x; 
-    if(tid < count/2){
-        int prev = d[tid];
-        d[tid] = d[count - tid - 1];
-        d[count - tid - 1] = prev;
-    }
+    //if(tid < count/2){
+    int prev = d[tid];
+    d[tid] = d[count - tid - 1];
+    d[count - tid - 1] = prev;
+    //}
 }
 
 int main() {
