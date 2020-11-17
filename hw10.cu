@@ -59,7 +59,7 @@ int main( int argc, char** argv) {
     // verify the data returned to the host is correct
     for (int i = 0; i < dimA; i++){
         if(i == 15) break;
-        printf("h_a[0] = %d and (dimA - 1 - %d) = %d\n", h_a[0], i,  dimA - 1 - i);
+        printf("h_a[%d] = %d and (dimA - 1 - %d) = %d\n", i, h_a[i], i,  dimA - 1 - i);
     }
     
     //printf("h_a[0] = %d and (dimA - 1 - i) = %d\n", h_a[0],  dimA - 1 - 0);
