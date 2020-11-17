@@ -34,7 +34,7 @@ int main(){
 #include <assert.h>
 #include <time.h>
 
-__global__ void reverse_array(int *d, int count){
+__global__ void reverse_array(int *d_in, int *d_out, int count){
     extern __shared__ int s_data[];
  
     int inOffset  = blockDim.x * blockIdx.x;
@@ -103,13 +103,13 @@ int main( int argc, char** argv) {
     // launch kernel
     dim3 dimGrid(num_blocks);
     dim3 dimBlock(num_th_per_blk);
-    reverse_array<<<dimGrid, dimBlock>>>(d_b, d_a, dimA);
+    reverse_array<<<dimGrid, dimBlock>>>(d_a, d_b, dimA);
  
     // block until the device has completed
     cudaThreadSynchronize();
  
     // device to host copy
-    cudaMemcpy(h_a, d_a, mem_size, cudaMemcpyDeviceToHost);
+    cudaMemcpy(h_a, d_b, mem_size, cudaMemcpyDeviceToHost);
  
     // verify the data returned to the host is correct
     for (int i = 0; i < dimA; i++){
