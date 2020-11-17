@@ -6,19 +6,19 @@
 #include <stdbool.h>
 
 /*
-    reverseArray
-    @params
+    reverseArray - reverses an array in kernel
+    @params int*A, int dim_a
     @return void
 */
-__global__ void reverseArray(int *A, int dimA){
+__global__ void reverseArray(int *A, int dim_a){
 
     int tid, temp;
     tid = blockIdx.x* blockDim.x+ threadIdx.x; 
 
-    if(tid < dimA/2){
+    if(tid < dim_a/2){
         temp = A[tid];
-        A[tid] = A[dimA-1-tid];
-        A[dimA-1-tid] = temp;
+        A[tid] = A[dim_a-1-tid];
+        A[dim_a-1-tid] = temp;
     }
 }
 
@@ -29,33 +29,28 @@ int main(int argc, char** argv)
 {
     // pointer for host memory and size
     int *h_a; 
-    int dimA = 16*1024*1024; // 16 MB
+    int dim_a = 16*1024*1024; // 16 MB
 
     // array to compare results
     int *check;
 
     // pointer for device memory
-    int *d_b, *d_a;
+    int *d_a;
 
     // define grid and block size
-    int numThreadsPerBlock = 8;
-
-    // Compute number of blocks needed based on array size and desired block size
-    int numBlocks = dimA / numThreadsPerBlock;
+    int num_th_per_blk = 8;
+    int num_blocks = dim_a / num_th_per_blk;
 
     // allocate host and device memory
-    size_t memSize = numBlocks * numThreadsPerBlock * sizeof(int);
+    size_t memSize = num_blocks * num_th_per_blk * sizeof(int);
     h_a = (int *) malloc(memSize);
     check = (int *) malloc(memSize);
     cudaMalloc((void **) &d_a, memSize);
-    cudaMalloc((void **) &d_b, memSize);
-
 
     // Initialize input array on host
     int val;
-    srand(time(0));
-    for (int i = 0; i < dimA; ++i)
-    {
+    srand(time(NULL));
+    for (int i = 0; i < dim_a; ++i){
         val = rand();
         h_a[i] = val;
         check[i] = val;
@@ -65,9 +60,9 @@ int main(int argc, char** argv)
     cudaMemcpy(d_a, h_a, memSize, cudaMemcpyHostToDevice );
 
     // launch kernel
-    dim3 dimGrid(numBlocks);
-    dim3 dimBlock(numThreadsPerBlock);
-    reverseArray<<< dimGrid, dimBlock >>>(d_a, dimA);
+    dim3 dimGrid(num_blocks);
+    dim3 dimBlock(num_th_per_blk);
+    reverseArray<<< dimGrid, dimBlock >>>(d_a, dim_a);
 
     // block until the device has completed
     cudaThreadSynchronize();
@@ -77,16 +72,13 @@ int main(int argc, char** argv)
 
     printf("Verifying program correctness.... ");
     // verify the data returned to the host is correct
-    for (int i = 0; i < dimA; i++)
-    {
-        assert(h_a[i] == check[dimA - 1 - i]);
+    for (int i = 0; i < dim_a; i++){
+        assert(h_a[i] == check[dim_a - 1 - i]);
     }
     printf("Everthing checks out!\n");
 
     // free device memory
     cudaFree(d_a);
-    cudaFree(d_b);
-
     // free host memory
     free(h_a);
     free(check);
