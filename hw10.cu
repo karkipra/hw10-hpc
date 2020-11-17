@@ -35,7 +35,6 @@ int main(){
 #include <time.h>
 
 __global__ void reverse_array(int *d, int count){
-    /*
     extern __shared__ int s_data[];
  
     int inOffset  = blockDim.x * blockIdx.x;
@@ -51,7 +50,9 @@ __global__ void reverse_array(int *d, int count){
     int outOffset = blockDim.x * (gridDim.x - 1 - blockIdx.x);
     int out = outOffset + threadIdx.x;
     d_out[out] = s_data[threadIdx.x];
-    */
+    
+
+    /*
     const int tid = threadIdx.x + blockIdx.x*blockDim.x;
     if(tid < count/2){
         const int new_tid = count - tid - 1;
@@ -59,6 +60,7 @@ __global__ void reverse_array(int *d, int count){
         d[tid] = d[new_tid];
         d[new_tid] = prev;
     }
+    */
 }
 
 int main( int argc, char** argv) {
@@ -69,10 +71,10 @@ int main( int argc, char** argv) {
     int *h_b;
  
     // pointer for device memory
-    int *d_a;
+    int *d_a, *d_b;
  
     // define grid and block size
-    int num_th_per_blk = 8;
+    int num_th_per_blk = 16;
     // Compute number of blocks needed based on array size and desired block size
     int num_blocks = dimA / num_th_per_blk;  
  
@@ -82,6 +84,7 @@ int main( int argc, char** argv) {
     h_a = (int *) malloc(mem_size);
     h_b = (int *) malloc(mem_size);
     cudaMalloc((void **) &d_a, mem_size);
+    cudaMalloc((void **) &d_b, mem_size);
 
     // seed the rand()
     srand(time(NULL));
@@ -100,7 +103,7 @@ int main( int argc, char** argv) {
     // launch kernel
     dim3 dimGrid(num_blocks);
     dim3 dimBlock(num_th_per_blk);
-    reverse_array<<<dimGrid, dimBlock>>>(d_a, dimA);
+    reverse_array<<<dimGrid, dimBlock>>>(d_b, d_a, dimA);
  
     // block until the device has completed
     cudaThreadSynchronize();
@@ -118,6 +121,7 @@ int main( int argc, char** argv) {
  
     // free device memory
     cudaFree(d_a);
+    cudaFree(d_b);
     // free host memory
     free(h_a);
     free(h_b);
