@@ -10,7 +10,7 @@ void revArr(int* arr, int start, int end);
 // Part 2 of 2: implement the fast kernel using shared memory
 __global__ void reverseArrayBlock(int *d_out, int *d_in)
 {
-    extern _shared_ int s_data[];
+    extern __shared__ int s_data[];
 
     int inOffset  = blockDim.x * blockIdx.x;
     int in  = inOffset + threadIdx.x;
