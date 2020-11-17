@@ -23,7 +23,7 @@ int main() {
     
     // define thread hierarchy 
     int dim_a= 16*1024*1024;
-    int num_blocks= 8; 
+    int num_blocks = 8; 
     int num_th_per_blk= dim_a/num_blocks; 
     
     // allocate host and device memory 
@@ -38,14 +38,14 @@ int main() {
     }
 
     // store to device
-    cudaMemcpy(d_a, h_a, memSize, cudaMemcpyDeviceToHost); 
+    //cudaMemcpy(d_a, h_a, memSize, cudaMemcpyDeviceToHost); 
     
     // launch kernel
     dim3 dimGrid(num_blocks);
     dim3 dimBlock(num_th_per_blk); 
     reverseArray<<<dimGrid, dimBlock>>>(d_a, dim_a); 
     
-    // retrieve results
+    // TODO retrieve results 
     cudaMemcpy(h_a, d_a, memSize, cudaMemcpyDeviceToHost); 
 
     // Initialize input array on host
