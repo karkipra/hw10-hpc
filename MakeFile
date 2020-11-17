@@ -1,0 +1,2 @@
+prog: hw10.cu
+	nvcc -o program hw10.cu
