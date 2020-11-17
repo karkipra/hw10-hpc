@@ -55,7 +55,7 @@
 #Sleep (wait and do nothing) for 60 seconds
 module load cuda
 nvcc hw10.cu -o program
-./hw10 > hw10.out
+./program > hw10.out
 
 #Print the end date of the job before exiting
 echo Now it is: `date`
