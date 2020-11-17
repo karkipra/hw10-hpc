@@ -84,6 +84,7 @@ int main( int argc, char** argv) {
     // Initialize input array on host
     for (int i = 0; i < dimA; ++i) {
         h_a[i] = rand();
+        h_b[i] = h_a[i];
     }
  
     // Copy host array to device array
@@ -106,7 +107,7 @@ int main( int argc, char** argv) {
     }
 
     printf("dimA = %d\n", dimA-1);
-    printf("h_a[0] = %d and h_a[%d] = %d\n", h_a[0], dimA-1, h_a[dimA-1]);
+    printf("h_a[0] = %d and h_b[%d] = %d\n", h_a[0], dimA-1, h_b[dimA-1]);
  
     // free device memory
     cudaFree(d_a);
