@@ -57,7 +57,7 @@ int main( int argc, char** argv) {
  
     // Initialize input array on host
     for (int i = 0; i < dimA; ++i){
-        h_a[i] = rand();
+        h_a[i] = i;
         h_b[i] = h_a[i];
     }
  
