@@ -79,7 +79,7 @@ int main() {
 }*/
 
 // kernel – reverse an array A
-__global__ void initArray(int *A, int dim_a) {
+__global__ void reverseArray(int *A, int dim_a) {
     int tid, temp, N; 
     tid = blockIdx.x* blockDim.x+ threadIdx.x; 
     N = blockDim.x * gridDim.x;
