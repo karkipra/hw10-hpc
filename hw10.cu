@@ -87,7 +87,6 @@ int main( int argc, char** argv) {
     h_a = (int *) malloc(mem_size);
     h_b = (int *) malloc(mem_size);
     cudaMalloc((void **) &d_a, mem_size);
-    cudaMalloc((void **) &d_b, mem_size);
 
     // seed the rand()
     srand(time(NULL));
