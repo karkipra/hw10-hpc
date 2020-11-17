@@ -82,7 +82,7 @@ int main(int argc, char** argv)
     // launch kernel
     dim3 dimGrid(numBlocks);
     dim3 dimBlock(numThreadsPerBlock);
-    reverseArrayBlock<<< dimGrid, dimBlock, sharedMemSize >>>(d_b, d_a);
+    reverseArray<<< dimGrid, dimBlock, sharedMemSize >>>(d_b, d_a);
 
     // block until the device has completed
     cudaThreadSynchronize();
@@ -90,16 +90,13 @@ int main(int argc, char** argv)
     // device to host copy
     cudaMemcpy( h_a, d_b, memSize, cudaMemcpyDeviceToHost );
 
-    // Reverse test array
-    revArr(test_arr, 0, dimA-1);
-
-    print("Verifying program correctness.... ");
+    printf("Verifying program correctness.... ");
     // verify the data returned to the host is correct
     for (int i = 0; i < dimA; i++)
     {
-        assert(h_a[i] == test_arr[dimA - 1 - i]);
+        assert(h_a[i] == check[dimA - 1 - i]);
     }
-    print("Everthing checks out!\n");
+    printf("Everthing checks out!\n");
 
     // free device memory
     cudaFree(d_a);
