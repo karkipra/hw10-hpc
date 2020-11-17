@@ -123,7 +123,6 @@ int main( int argc, char** argv) {
  
     // free device memory
     cudaFree(d_a);
-    cudaFree(d_b);
     // free host memory
     free(h_a);
     free(h_b);
