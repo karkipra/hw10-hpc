@@ -104,6 +104,9 @@ int main( int argc, char** argv) {
     for (int i = 0; i < dimA; i++){
         assert(h_a[i] == h_b[dimA - 1 - i]);
     }
+
+    printf("dimA = %d\n", dimA-1);
+    printf("h_a[0] = %d and h_b[%d] = %d\n", h_a[0], dimA-1, h_b[dimA-1]);
  
     // free device memory
     cudaFree(d_a);
