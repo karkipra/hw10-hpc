@@ -104,7 +104,7 @@ int main(int argc, char** argv)
 
     // free host memory
     free(h_a);
-    free(test_arr);
+    free(check);
 
     return 0;
 }
