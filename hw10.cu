@@ -4,7 +4,7 @@
 
 __global__ void reverse_array(int *d, int count){
     int tid;
-    tid = threadIdx.x + blockIdx.x*blockDim.x;
+    tid = blockIdx.x* blockDim.x+ threadIdx.x; 
     if(tid < count/2){
         int prev = d[tid];
         d[tid] = d[count - tid - 1];
