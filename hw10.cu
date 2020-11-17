@@ -98,7 +98,7 @@ int main( int argc, char** argv) {
     cudaThreadSynchronize();
  
     // device to host copy
-    cudaMemcpy( h_b, d_b, mem_size, cudaMemcpyDeviceToHost );
+    cudaMemcpy( h_a, d_b, mem_size, cudaMemcpyDeviceToHost );
  
     // verify the data returned to the host is correct
     for (int i = 0; i < dimA; i++){
@@ -106,7 +106,7 @@ int main( int argc, char** argv) {
     }
 
     printf("dimA = %d\n", dimA-1);
-    printf("h_a[0] = %d and h_b[%d] = %d\n", h_a[0], dimA-1, h_b[dimA-1]);
+    printf("h_a[0] = %d and h_a[%d] = %d\n", h_a[0], dimA-1, h_a[dimA-1]);
  
     // free device memory
     cudaFree(d_a);
