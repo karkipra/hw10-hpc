@@ -5,10 +5,12 @@
 #include <time.h>
 #include <stdbool.h>
 
-void revArr(int* arr, int start, int end);
-
-// Part 2 of 2: implement the fast kernel using shared memory
-__global__ void reverseArrayBlock(int *d_out, int *d_in)
+/*
+    reverseArray
+    @params
+    @return void
+*/
+__global__ void reverseArray(int *d_out, int *d_in)
 {
     extern __shared__ int s_data[];
 
@@ -31,14 +33,17 @@ __global__ void reverseArrayBlock(int *d_out, int *d_in)
     d_out[out] = s_data[threadIdx.x];
 }
 
-////////////////////////////////////////////////////////////////////
-// Program main
-////////////////////////////////////////////////////////////////////
-int main( int argc, char** argv)
+/*
+    main program
+*/
+int main(int argc, char** argv)
 {
     // pointer for host memory and size
-    int *h_a;
-    int dimA = 16*1024*1024; // 256K elements (1MB total)
+    int *h_a; 
+    int dimA = 16*1024*1024; // 16 MB
+
+    // array to compare results
+    int *check;
 
     // pointer for device memory
     int *d_b, *d_a;
@@ -56,11 +61,10 @@ int main( int argc, char** argv)
     // allocate host and device memory
     size_t memSize = numBlocks * numThreadsPerBlock * sizeof(int);
     h_a = (int *) malloc(memSize);
-    cudaMalloc( (void **) &d_a, memSize );
-    cudaMalloc( (void **) &d_b, memSize );
+    check = (int *) malloc(memSize);
+    cudaMalloc((void **) &d_a, memSize);
+    cudaMalloc((void **) &d_b, memSize);
 
-    int* test_arr;
-    test_arr = (int*) malloc(dimA * sizeof(int));
 
     // Initialize input array on host
     int val;
@@ -69,7 +73,7 @@ int main( int argc, char** argv)
     {
         val = rand();
         h_a[i] = val;
-        test_arr[i] = val;
+        check[i] = val;
     }
 
     // Copy host array to device array
@@ -78,7 +82,7 @@ int main( int argc, char** argv)
     // launch kernel
     dim3 dimGrid(numBlocks);
     dim3 dimBlock(numThreadsPerBlock);
-    reverseArrayBlock<<< dimGrid, dimBlock, sharedMemSize >>>( d_b, d_a );
+    reverseArrayBlock<<< dimGrid, dimBlock, sharedMemSize >>>(d_b, d_a);
 
     // block until the device has completed
     cudaThreadSynchronize();
@@ -89,12 +93,13 @@ int main( int argc, char** argv)
     // Reverse test array
     revArr(test_arr, 0, dimA-1);
 
+    print("Verifying program correctness.... ");
     // verify the data returned to the host is correct
     for (int i = 0; i < dimA; i++)
     {
-        //assert(h_a[i] == dimA - 1 - i );
-        assert(h_a[i] == test_arr[i]);
+        assert(h_a[i] == test_arr[dimA - 1 - i]);
     }
+    print("Everthing checks out!\n");
 
     // free device memory
     cudaFree(d_a);
@@ -104,21 +109,5 @@ int main( int argc, char** argv)
     free(h_a);
     free(test_arr);
 
-    // If the program makes it this far, then the results are correct and
-    // there are no run-time errors.  Good work!
-    printf("Correct!\n");
-
     return 0;
 }
-
-void revArr(int* arr, int start, int end) {
-  while (start < end) {
-    int temp = arr[start];
-    arr[start] = arr[end];
-    arr[end] = temp;
-    start++;
-    end--;
-  }
-}
-
-// nvcc hw10.cu -o hw10
