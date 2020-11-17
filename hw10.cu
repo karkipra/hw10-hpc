@@ -84,11 +84,14 @@ __global__ void reverseArray(int *A, int dim_a) {
     tid = blockIdx.x* blockDim.x+ threadIdx.x; 
     N = blockDim.x * gridDim.x;
 
+    A[tid] = tid;
+
+    /*
     if(tid < dim_a/2){
         temp = A[N-tid-1];
         A[N-tid-1] = A[tid];
         A[tid] = temp; 
-    }
+    }*/
 } 
 
 int main() {
@@ -108,7 +111,7 @@ int main() {
 
     // Initialize input array on host
     for (int i = 0; i < dim_a; ++i) {
-        h_a[i] = i; //rand();
+        //h_a[i] = i; //rand();
     }
 
     // store to device
