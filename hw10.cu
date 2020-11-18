@@ -75,8 +75,7 @@ int main(int argc, char** argv){
     // verify the data returned to the host is correct
     for (int i = 0; i < dim_a; i++){
         if(i == 100) break;
-        printf("h_a[%d] = %d and check[%d] = %d\n", i, h_a[i], dim_a-1-i, check[dim_a - 1 - i]);
-        //assert(h_a[i] == check[dim_a - 1 - i]);
+        assert(h_a[i] == check[dim_a - 1 - i]);
     }
     printf("Everthing checks out!\n");
 
